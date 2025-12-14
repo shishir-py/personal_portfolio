@@ -62,7 +62,7 @@ const animateSkillBars = () => {
         const screenPosition = window.innerHeight;
         
         if (barPosition < screenPosition) {
-            const width = bar.style.width;
+            const width = window.getComputedStyle(bar).width;
             bar.style.width = '0';
             setTimeout(() => {
                 bar.style.width = width;
@@ -149,16 +149,16 @@ window.addEventListener('scroll', () => {
 });
 
 // Counter animation for stats
-const animateCounter = (element, target) => {
+const animateCounter = (element, target, suffix) => {
     let current = 0;
     const increment = target / 100;
     const timer = setInterval(() => {
         current += increment;
         if (current >= target) {
-            element.textContent = target.toString();
+            element.textContent = target.toString() + suffix;
             clearInterval(timer);
         } else {
-            element.textContent = Math.floor(current).toString();
+            element.textContent = Math.floor(current).toString() + suffix;
         }
     }, 20);
 };
@@ -175,14 +175,13 @@ window.addEventListener('scroll', () => {
             const statNumbers = document.querySelectorAll('.stat-card h3');
             statNumbers.forEach(stat => {
                 const text = stat.textContent;
-                const number = parseInt(text.replace(/\D/g, ''));
-                if (number) {
-                    stat.textContent = '0';
-                    animateCounter(stat, number);
-                    // Add back the + or other characters
-                    setTimeout(() => {
-                        stat.textContent = text;
-                    }, 2000);
+                // Extract number and suffix separately
+                const match = text.match(/^(\d+)(.*)$/);
+                if (match) {
+                    const number = parseInt(match[1]);
+                    const suffix = match[2];
+                    stat.textContent = '0' + suffix;
+                    animateCounter(stat, number, suffix);
                 }
             });
             statsAnimated = true;
