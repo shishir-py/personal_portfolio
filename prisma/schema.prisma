@@ -1,0 +1,153 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Profile {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  fullName    String
+  title       String
+  bio         String
+  shortBio    String
+  location    String
+  email       String
+  phone       String?
+  profilePic  String?
+  resume      String?
+  socialLinks Json?    // { linkedin: '', github: '', twitter: '' }
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Experience {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  company     String
+  location    String
+  startDate   DateTime
+  endDate     DateTime?
+  current     Boolean  @default(false)
+  description String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Education {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  institution String
+  degree      String
+  field       String
+  location    String
+  startDate   DateTime
+  endDate     DateTime?
+  current     Boolean  @default(false)
+  description String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Skill {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  level     Int      @default(0) // 0-100
+  category  String   // e.g. "Programming", "Tools", "Languages"
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  slug        String   @unique
+  description String
+  content     String   @db.String
+  coverImage  String?
+  githubUrl   String?
+  demoUrl     String?
+  featured    Boolean  @default(false)
+  tags        String[] // ["ML", "Python", "Dashboard"]
+  order       Int      @default(0)
+  likes       Int      @default(0)
+  comments    Comment[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Certificate {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  issuer      String
+  issueDate   DateTime
+  expiryDate  DateTime?
+  credentialId String?
+  credentialUrl String?
+  description String?
+  image       String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Post {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  title      String
+  slug       String   @unique
+  excerpt    String
+  content    String   @db.String
+  coverImage String?
+  tags       String[] // ["Data Analysis", "Python", "Machine Learning"]
+  published  Boolean  @default(false)
+  views      Int      @default(0)
+  likes      Int      @default(0)
+  comments   Comment[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Visitor {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  page      String
+  referrer  String?
+  ip        String?
+  userAgent String?
+  date      DateTime @default(now())
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  author    String   @default("Anonymous")
+  projectId String?  @db.ObjectId
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  postId    String?  @db.ObjectId
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Feedback {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  message   String
+  email     String?
+  rating    Int      @default(0)
+  createdAt DateTime @default(now())
+}

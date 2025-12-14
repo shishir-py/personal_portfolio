@@ -1,0 +1,17 @@
+{
+  "id": "1",
+  "fullName": "Tara Prasad Pandey",
+  "title": "Senior Data Scientist & AI Engineer", 
+  "bio": "Passionate data scientist with 5+ years of experience in machine learning, artificial intelligence, and data analytics. Skilled in Python, R, TensorFlow, and cloud platforms.",
+  "shortBio": "Data Scientist & AI Engineer with expertise in ML and analytics",
+  "location": "San Francisco, CA",
+  "email": "tara.prasad@example.com",
+  "phone": "+1 (555) 123-4567",
+  "profilePic": "/1000079466.jpg",
+  "resume": "/tara_prasad_cv.pdf",
+  "socialLinks": {
+    "linkedin": "https://linkedin.com/in/taraprasad",
+    "github": "https://github.com/taraprasad", 
+    "twitter": "https://twitter.com/taraprasad"
+  }
+}
