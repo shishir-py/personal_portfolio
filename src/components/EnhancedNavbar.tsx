@@ -5,17 +5,19 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Home, User, Briefcase, FileText, Mail, ExternalLink } from 'lucide-react';
+import { useProfile } from '@/contexts/ProfileContext';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  
+  const profile = useProfile();
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -26,12 +28,24 @@ export function Navbar() {
     } else {
       document.body.style.overflow = 'unset';
     }
-    
+
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, [isMobileMenuOpen]);
-  
+
+  // Derive initials from full name
+  const getInitials = (name: string) => {
+    if (!name) return 'TP';
+    const parts = name.split(' ');
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[parts.length - 1][0]}`;
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
+  const initials = getInitials(profile.fullName);
+
   const navLinks = [
     { title: 'Home', path: '/', icon: Home },
     { title: 'About', path: '/about', icon: User },
@@ -39,7 +53,7 @@ export function Navbar() {
     { title: 'Blog', path: '/blog', icon: FileText },
     { title: 'Contact', path: '/contact', icon: Mail },
   ];
-  
+
   const isActive = (path: string) => {
     if (path === '/') {
       return pathname === path;
@@ -53,11 +67,10 @@ export function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.25, 0.25, 0.25, 0.75] }}
-        className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-          isScrolled 
-            ? 'bg-dark-200/95 backdrop-blur-md border-b border-gray-700/50 shadow-xl' 
+        className={`fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled
+            ? 'bg-dark-200/95 backdrop-blur-md border-b border-gray-700/50 shadow-xl'
             : 'bg-transparent'
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
@@ -69,15 +82,15 @@ export function Navbar() {
               <Link href="/" className="flex items-center space-x-3 group">
                 <div className="relative">
                   <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-primary-500/25 transition-shadow">
-                    <span className="text-white font-bold text-lg">TP</span>
+                    <span className="text-white font-bold text-lg">{initials}</span>
                   </div>
                   <div className="absolute -inset-0.5 bg-gradient-to-r from-primary-500 to-purple-500 rounded-xl opacity-0 group-hover:opacity-30 transition-opacity blur"></div>
                 </div>
                 <div className="hidden sm:block">
                   <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300">
-                    Tara Prasad
+                    {profile.fullName || 'Tara Prasad'}
                   </span>
-                  <div className="text-xs text-gray-400 -mt-1">Data Scientist</div>
+                  <div className="text-xs text-gray-400 -mt-1">{profile.title || 'Data Scientist'}</div>
                 </div>
               </Link>
             </motion.div>
@@ -87,7 +100,7 @@ export function Navbar() {
               {navLinks.map((link, index) => {
                 const Icon = link.icon;
                 const active = isActive(link.path);
-                
+
                 return (
                   <motion.div
                     key={link.path}
@@ -97,11 +110,10 @@ export function Navbar() {
                   >
                     <Link
                       href={link.path}
-                      className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center space-x-2 group ${
-                        active
+                      className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center space-x-2 group ${active
                           ? 'text-white'
                           : 'text-gray-300 hover:text-white'
-                      }`}
+                        }`}
                     >
                       {active && (
                         <motion.div
@@ -110,11 +122,10 @@ export function Navbar() {
                           transition={{ duration: 0.3, ease: [0.25, 0.25, 0.25, 0.75] }}
                         />
                       )}
-                      <Icon className={`w-4 h-4 relative z-10 transition-transform group-hover:scale-110 ${
-                        active ? 'text-white' : ''
-                      }`} />
+                      <Icon className={`w-4 h-4 relative z-10 transition-transform group-hover:scale-110 ${active ? 'text-white' : ''
+                        }`} />
                       <span className="relative z-10">{link.title}</span>
-                      
+
                       {!active && (
                         <div className="absolute inset-0 bg-white/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       )}
@@ -137,7 +148,7 @@ export function Navbar() {
                 >
                   <span className="relative z-10">Hire Me</span>
                   <ExternalLink className="w-4 h-4 relative z-10 group-hover:translate-x-0.5 transition-transform" />
-                  
+
                   <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                 </Link>
               </motion.div>
@@ -189,7 +200,7 @@ export function Navbar() {
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             />
-            
+
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
@@ -215,7 +226,7 @@ export function Navbar() {
                     {navLinks.map((link, index) => {
                       const Icon = link.icon;
                       const active = isActive(link.path);
-                      
+
                       return (
                         <motion.div
                           key={link.path}
@@ -226,11 +237,10 @@ export function Navbar() {
                           <Link
                             href={link.path}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 ${
-                              active
+                            className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 ${active
                                 ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
                                 : 'text-gray-300 hover:text-white hover:bg-dark-100'
-                            }`}
+                              }`}
                           >
                             <Icon className={`w-5 h-5 ${active ? 'text-white' : ''}`} />
                             <span className="font-medium">{link.title}</span>
@@ -254,9 +264,9 @@ export function Navbar() {
                     <span>Let's Work Together</span>
                     <ExternalLink className="w-4 h-4" />
                   </Link>
-                  
+
                   <div className="mt-4 text-center text-sm text-gray-400">
-                    © 2024 Tara Prasad Pandey
+                    © {new Date().getFullYear()} {profile.fullName || 'Tara Prasad Pandey'}
                   </div>
                 </div>
               </div>

@@ -8,36 +8,16 @@ import { MapPin, Calendar, Award, Users, Coffee, Heart } from 'lucide-react';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
-interface ProfileData {
-  fullName?: string;
-  title?: string;
-  bio?: string;
-  location?: string;
-  profilePic?: string;
-  socialLinks?: {
-    linkedin?: string;
-    github?: string;
-    twitter?: string;
-  };
-}
+import { useProfile } from '@/contexts/ProfileContext';
 
 export default function AboutPage() {
-  const [profile, setProfile] = useState<ProfileData>({});
+  const profile = useProfile();
   const [experiences, setExperiences] = useState<any[]>([]);
   const [education, setEducation] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch profile
-        const profileResponse = await fetch('/api/profile');
-        if (profileResponse.ok) {
-          const profileResult = await profileResponse.json();
-          if (profileResult.success && profileResult.profile) {
-            setProfile(profileResult.profile);
-          }
-        }
-
         // Fetch experience
         const experienceResponse = await fetch('/api/experience');
         if (experienceResponse.ok) {
@@ -74,7 +54,7 @@ export default function AboutPage() {
     <div className="min-h-screen bg-gradient-to-br from-dark-300 via-dark-200 to-dark-100 relative">
       <AnimatedBackground />
       <Navbar />
-      
+
       <div className="relative z-10">
         {/* Hero Section */}
         <section className="pt-32 pb-20 px-4 sm:px-6 md:px-8 lg:px-12">
@@ -109,30 +89,38 @@ export default function AboutPage() {
               <ScrollReveal direction="right">
                 <div className="space-y-6">
                   <h2 className="text-3xl font-bold text-white mb-6">My Journey</h2>
-                  
+
                   <div className="space-y-4 text-gray-300">
-                    <p>
-                      Born and raised in the beautiful hills of Nepal 🇳🇵, I discovered my passion for data and technology 
-                      during my university years. What started as curiosity about how data could tell stories evolved 
-                      into a full-fledged career in data science and machine learning.
-                    </p>
-                    
-                    <p>
-                      With over 5 years of experience in the field, I've had the privilege of working on diverse projects 
-                      ranging from predictive analytics for healthcare to automation systems for financial services. 
-                      I believe in the power of data to drive positive change in the world.
-                    </p>
-                    
-                    <p>
-                      When I'm not coding or analyzing data, you'll find me exploring the mountains of Nepal, 
-                      contributing to open-source projects, or sharing knowledge with the next generation of data enthusiasts.
-                    </p>
+                    {profile.bio ? (
+                      profile.bio.split('\n').map((paragraph, idx) => (
+                        <p key={idx}>{paragraph}</p>
+                      ))
+                    ) : (
+                      <>
+                        <p>
+                          Born and raised in the beautiful hills of Nepal 🇳🇵, I discovered my passion for data and technology
+                          during my university years. What started as curiosity about how data could tell stories evolved
+                          into a full-fledged career in data science and machine learning.
+                        </p>
+
+                        <p>
+                          With over 5 years of experience in the field, I've had the privilege of working on diverse projects
+                          ranging from predictive analytics for healthcare to automation systems for financial services.
+                          I believe in the power of data to drive positive change in the world.
+                        </p>
+
+                        <p>
+                          When I'm not coding or analyzing data, you'll find me exploring the mountains of Nepal,
+                          contributing to open-source projects, or sharing knowledge with the next generation of data enthusiasts.
+                        </p>
+                      </>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-4 pt-4">
                     <div className="flex items-center gap-2 text-primary-400">
                       <MapPin className="w-4 h-4" />
-                      <span>Kathmandu, Nepal</span>
+                      <span>{profile.location || 'Kathmandu, Nepal'}</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-400">
                       <Calendar className="w-4 h-4" />
@@ -167,7 +155,7 @@ export default function AboutPage() {
                         {new Date(exp.startDate).getFullYear()} - {exp.current ? 'Present' : new Date(exp.endDate).getFullYear()}
                       </div>
                     </div>
-                    
+
                     {exp.location && <p className="text-gray-400 text-sm mb-2">{exp.location}</p>}
                     <p className="text-gray-300 mb-4">{exp.description}</p>
                   </div>

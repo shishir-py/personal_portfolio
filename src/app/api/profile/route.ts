@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   try {
     // Get profile from database or create default one
     let profile = await prisma.profile.findFirst();
-    
+
     if (!profile) {
       // Create default profile if none exists
       profile = await prisma.profile.create({
@@ -14,9 +14,9 @@ export async function GET(request: NextRequest) {
           title: 'Senior Data Scientist & AI Engineer',
           bio: 'Passionate data scientist with 5+ years of experience in machine learning, artificial intelligence, and data analytics. Skilled in Python, R, TensorFlow, and cloud platforms.',
           shortBio: 'Data Scientist & AI Engineer with expertise in ML and analytics',
-          location: 'San Francisco, CA',
+          location: 'Kathmandu, Nepal',
           email: 'tara.prasad@example.com',
-          phone: '+1 (555) 123-4567',
+          phone: '+977 9841234567',
           profilePic: '/1000079466.jpg',
           resume: '/tara_prasad_cv.pdf',
           socialLinks: {
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
         }
       });
     }
-    
+
     return NextResponse.json({ success: true, profile });
   } catch (error) {
     console.error('Error fetching profile:', error);
@@ -42,10 +42,10 @@ export async function PUT(request: NextRequest) {
   try {
     // Get request body
     const data = await request.json();
-    
+
     // Get current profile from database
     let profile = await prisma.profile.findFirst();
-    
+
     if (!profile) {
       // Create new profile if none exists
       profile = await prisma.profile.create({
@@ -81,8 +81,8 @@ export async function PUT(request: NextRequest) {
       });
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       profile: profile,
       message: 'Profile updated successfully'
     });

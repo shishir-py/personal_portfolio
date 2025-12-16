@@ -16,7 +16,10 @@ interface ContactForm {
   timeline?: string;
 }
 
+import { useProfile } from '@/contexts/ProfileContext';
+
 export default function ContactPage() {
+  const profile = useProfile();
   const [formData, setFormData] = useState<ContactForm>({
     name: '',
     email: '',
@@ -33,31 +36,33 @@ export default function ContactPage() {
     {
       icon: Mail,
       title: 'Email',
-      value: 'tara.prasad@example.com',
+      value: profile.email || 'tara.prasad@example.com',
       description: 'Send me an email anytime',
-      link: 'mailto:tara.prasad@example.com'
+      link: `mailto:${profile.email || 'tara.prasad@example.com'}`
     },
     {
       icon: Phone,
       title: 'Phone',
-      value: '+977 9841234567',
+      value: profile.phone || '+977 9841234567',
       description: 'Mon-Fri from 9am to 6pm',
-      link: 'tel:+9779841234567'
+      link: `tel:${(profile.phone || '+9779841234567').replace(/\s/g, '')}`
     },
     {
       icon: MapPin,
       title: 'Location',
-      value: 'Kathmandu, Nepal',
+      value: profile.location || 'Kathmandu, Nepal',
       description: 'Available for remote work worldwide',
-      link: 'https://maps.google.com/?q=Kathmandu,Nepal'
+      link: `https://maps.google.com/?q=${encodeURIComponent(profile.location || 'Kathmandu, Nepal')}`
     }
   ];
 
+  const socialData = profile.socialLinks as { linkedin?: string; github?: string; twitter?: string } || {};
+
   const socialLinks = [
-    { icon: Github, name: 'GitHub', url: 'https://github.com/taraprasadpandey', color: 'hover:text-gray-300' },
-    { icon: Linkedin, name: 'LinkedIn', url: 'https://linkedin.com/in/taraprasadpandey', color: 'hover:text-blue-400' },
-    { icon: Twitter, name: 'Twitter', url: 'https://twitter.com/taraprasadpandey', color: 'hover:text-blue-400' },
-  ];
+    { icon: Github, name: 'GitHub', url: socialData.github || 'https://github.com', color: 'hover:text-gray-300', show: !!socialData.github },
+    { icon: Linkedin, name: 'LinkedIn', url: socialData.linkedin || 'https://linkedin.com', color: 'hover:text-blue-400', show: !!socialData.linkedin },
+    { icon: Twitter, name: 'Twitter', url: socialData.twitter || 'https://twitter.com', color: 'hover:text-blue-400', show: !!socialData.twitter },
+  ].filter(link => link.show);
 
   const projectBudgets = [
     'Under $5,000',

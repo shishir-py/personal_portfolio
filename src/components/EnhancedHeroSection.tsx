@@ -4,59 +4,11 @@ import { motion } from 'framer-motion';
 import { ChevronDown, Download, Mail, MapPin, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
-
-interface ProfileData {
-  fullName?: string;
-  title?: string;
-  bio?: string;
-  location?: string;
-  profilePic?: string;
-  resume?: string;
-  socialLinks?: {
-    linkedin?: string;
-    github?: string;
-    twitter?: string;
-  };
-}
+import { useProfile } from '@/contexts/ProfileContext';
 
 export const EnhancedHeroSection = () => {
-  const [profile, setProfile] = useState<ProfileData>({});
+  const profile = useProfile();
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await fetch('/api/profile');
-        if (response.ok) {
-          const result = await response.json();
-          if (result.success && result.profile) {
-            setProfile(result.profile);
-          }
-        } else {
-          // Fallback to default profile data
-          setProfile({
-            fullName: 'Shishir Pandey',
-            title: 'Data Scientist & AI Engineer',
-            bio: 'Passionate about machine learning, data visualization, and solving real-world problems through data-driven insights.',
-            location: 'Kathmandu, Nepal',
-            profilePic: '/1000079466.jpg'
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-        // Fallback to default profile data
-        setProfile({
-          fullName: 'Shishir Pandey',
-          title: 'Data Scientist & AI Engineer',
-          bio: 'Passionate about machine learning, data visualization, and solving real-world problems through data-driven insights.',
-          location: 'Kathmandu, Nepal',
-          profilePic: '/1000079466.jpg'
-        });
-      }
-    };
-
-    fetchProfile();
-  }, []);
   const containerVariants: any = {
     hidden: { opacity: 0 },
     visible: {
@@ -174,8 +126,10 @@ export const EnhancedHeroSection = () => {
 
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <a
-                  href="/tara_prasad_cv.pdf"
-                  download="Tara_Prasad_Pandey_CV.pdf"
+                  href={profile.resume || "/tara_prasad_cv.pdf"}
+                  download={profile.resume ? undefined : "Tara_Prasad_Pandey_CV.pdf"}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-8 py-4 bg-transparent border-2 border-gray-600 text-gray-300 font-medium rounded-full hover:border-primary-500 hover:text-primary-400 transition-all duration-300"
                 >
                   <Download className="w-5 h-5" />
