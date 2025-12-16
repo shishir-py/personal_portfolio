@@ -90,18 +90,28 @@ export default function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-    
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Here you would typically send the data to your backend
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to submit form');
+      }
+
       console.log('Form submitted:', formData);
-      
+
       setIsSubmitted(true);
       setFormData({
         name: '',
@@ -113,6 +123,8 @@ export default function ContactPage() {
       });
     } catch (error) {
       console.error('Error submitting form:', error);
+      // In a real app, you might want to show an error message to the user here
+      alert('Failed to send message. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
@@ -121,7 +133,7 @@ export default function ContactPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
+
     // Clear error when user starts typing
     if (errors[name as keyof ContactForm]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
@@ -133,7 +145,7 @@ export default function ContactPage() {
       <div className="min-h-screen bg-gradient-to-br from-dark-300 via-dark-200 to-dark-100 relative">
         <AnimatedBackground />
         <Navbar />
-        
+
         <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -149,12 +161,12 @@ export default function ContactPage() {
             >
               <CheckCircle className="w-10 h-10 text-white" />
             </motion.div>
-            
+
             <h2 className="text-3xl font-bold text-white mb-4">Thank You!</h2>
             <p className="text-gray-300 mb-6">
               Your message has been sent successfully. I'll get back to you within 24 hours.
             </p>
-            
+
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -173,7 +185,7 @@ export default function ContactPage() {
     <div className="min-h-screen bg-gradient-to-br from-dark-300 via-dark-200 to-dark-100 relative">
       <AnimatedBackground />
       <Navbar />
-      
+
       <div className="relative z-10">
         {/* Hero Section */}
         <section className="pt-32 pb-20 px-4 sm:px-6 md:px-8 lg:px-12">
@@ -184,7 +196,7 @@ export default function ContactPage() {
                   Let's Work Together
                 </h1>
                 <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                  Have a project in mind or want to discuss data science opportunities? 
+                  Have a project in mind or want to discuss data science opportunities?
                   I'd love to hear from you. Let's create something amazing together.
                 </p>
               </div>
@@ -227,7 +239,7 @@ export default function ContactPage() {
               <ScrollReveal>
                 <div className="bg-dark-100 rounded-2xl p-8 border border-gray-700/50">
                   <h2 className="text-3xl font-bold text-white mb-6">Send a Message</h2>
-                  
+
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -239,14 +251,13 @@ export default function ContactPage() {
                           name="name"
                           value={formData.name}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 bg-dark-200 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors ${
-                            errors.name ? 'border-red-500' : 'border-gray-600'
-                          }`}
+                          className={`w-full px-4 py-3 bg-dark-200 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors ${errors.name ? 'border-red-500' : 'border-gray-600'
+                            }`}
                           placeholder="Your full name"
                         />
                         {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name}</p>}
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">
                           Email *
@@ -256,9 +267,8 @@ export default function ContactPage() {
                           name="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 bg-dark-200 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors ${
-                            errors.email ? 'border-red-500' : 'border-gray-600'
-                          }`}
+                          className={`w-full px-4 py-3 bg-dark-200 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors ${errors.email ? 'border-red-500' : 'border-gray-600'
+                            }`}
                           placeholder="your.email@example.com"
                         />
                         {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
@@ -274,9 +284,8 @@ export default function ContactPage() {
                         name="subject"
                         value={formData.subject}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 bg-dark-200 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors ${
-                          errors.subject ? 'border-red-500' : 'border-gray-600'
-                        }`}
+                        className={`w-full px-4 py-3 bg-dark-200 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors ${errors.subject ? 'border-red-500' : 'border-gray-600'
+                          }`}
                         placeholder="What's this about?"
                       />
                       {errors.subject && <p className="text-red-400 text-sm mt-1">{errors.subject}</p>}
@@ -299,7 +308,7 @@ export default function ContactPage() {
                           ))}
                         </select>
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">
                           Timeline
@@ -327,9 +336,8 @@ export default function ContactPage() {
                         rows={6}
                         value={formData.message}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 bg-dark-200 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors resize-none ${
-                          errors.message ? 'border-red-500' : 'border-gray-600'
-                        }`}
+                        className={`w-full px-4 py-3 bg-dark-200 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors resize-none ${errors.message ? 'border-red-500' : 'border-gray-600'
+                          }`}
                         placeholder="Tell me about your project, goals, and how I can help..."
                       />
                       {errors.message && <p className="text-red-400 text-sm mt-1">{errors.message}</p>}
@@ -363,7 +371,7 @@ export default function ContactPage() {
                 <div className="space-y-8">
                   <div className="bg-dark-100 rounded-2xl p-8 border border-gray-700/50">
                     <h3 className="text-2xl font-bold text-white mb-6">Let's Connect</h3>
-                    
+
                     <div className="space-y-4 mb-8">
                       <div className="flex items-center gap-3 text-gray-300">
                         <Clock className="w-5 h-5 text-primary-400" />
