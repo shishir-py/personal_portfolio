@@ -7,6 +7,13 @@ async function main() {
   console.log('🌱 Starting database seed...');
 
   try {
+    // Get admin credentials from environment variables or use defaults
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const adminName = process.env.ADMIN_NAME || 'Tara Prasad Pandey';
+
+    console.log(`📧 Using admin email: ${adminEmail}`);
+
     // Clear existing data
     console.log('🗑️  Clearing existing data...');
     // Delete in order to avoid foreign key constraints (though MongoDB doesn't strictly enforce them, Prisma might check connected records)
@@ -24,12 +31,12 @@ async function main() {
 
     // Create admin user
     console.log('👤 Creating admin user...');
-    const hashedPassword = await hash('admin123', 12);
+    const hashedPassword = await hash(adminPassword, 12);
 
     await prisma.user.create({
       data: {
-        email: 'admin@example.com',
-        name: 'Tara Prasad Pandey',
+        email: adminEmail,
+        name: adminName,
         password: hashedPassword,
         role: 'admin',
       },
