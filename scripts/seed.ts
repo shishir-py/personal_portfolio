@@ -8,8 +8,8 @@ async function main() {
 
   try {
     // Get admin credentials from environment variables or use defaults
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const adminEmail = process.env.ADMIN_EMAIL || 'sheahead22@gmail.com';
+    const adminPassword = process.env.ADMIN_PASSWORD || '$h!$h!r@he@d22@gmail.com';
     const adminName = process.env.ADMIN_NAME || 'Tara Prasad Pandey';
 
     console.log(`📧 Using admin email: ${adminEmail}`);
