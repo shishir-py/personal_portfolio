@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAuth } from '@/lib/auth';
+import { revalidateAdminChanges } from '@/lib/revalidate';
 import fs from 'fs';
 import path from 'path';
 
@@ -129,6 +130,9 @@ export async function POST(request: Request) {
         order: order || 0
       }
     });
+
+    // Revalidate cache after creating project
+    await revalidateAdminChanges('projects');
 
     return NextResponse.json({
       success: true,

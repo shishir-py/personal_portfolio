@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAuth } from '@/lib/auth';
+import { revalidateAdminChanges } from '@/lib/revalidate';
 
 interface ProjectParams {
   params: {
@@ -146,6 +147,9 @@ export async function PUT(request: Request, { params }: ProjectParams) {
       data: updateData
     });
     
+    // Revalidate cache after updating project
+    await revalidateAdminChanges('projects');
+    
     return NextResponse.json({
       success: true,
       message: 'Project updated successfully',
@@ -197,6 +201,9 @@ export async function DELETE(request: Request, { params }: ProjectParams) {
     await prisma.project.delete({
       where: { id }
     });
+    
+    // Revalidate cache after deleting project
+    await revalidateAdminChanges('projects');
     
     return NextResponse.json({
       success: true,

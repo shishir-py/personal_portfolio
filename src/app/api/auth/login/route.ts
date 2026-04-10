@@ -4,6 +4,9 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { generateJwtToken } from '@/lib/auth';
 
+// Mark as dynamic since this route uses cookies
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   try {
     // Parse request body

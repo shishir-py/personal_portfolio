@@ -42,7 +42,11 @@ export default function BlogPage() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch('/api/blog');
+        // Fetch only published posts
+        const response = await fetch('/api/blog?published=true', { 
+          // Disable Next.js cache to always get fresh data
+          cache: 'no-store'
+        });
         if (response.ok) {
           const data = await response.json();
           if (data.success && data.posts) {
@@ -62,7 +66,7 @@ export default function BlogPage() {
               category: post.tags?.[0] || 'General',
               author: 'Shishir Pandey',
               readTime: Math.ceil(post.content?.length / 1000) || 5
-            }));
+            })).filter(post => post.published); // Only show published posts
             setPosts(transformedPosts);
             setFilteredPosts(transformedPosts);
           } else {
@@ -83,6 +87,10 @@ export default function BlogPage() {
     };
 
     fetchPosts();
+    
+    // Poll for new posts every 30 seconds
+    const interval = setInterval(fetchPosts, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {

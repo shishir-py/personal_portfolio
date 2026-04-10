@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { revalidateAdminChanges } from '@/lib/revalidate';
 
 export async function GET(request: NextRequest) {
   try {
@@ -69,6 +70,9 @@ export async function POST(request: NextRequest) {
       }
     });
 
+    // Revalidate cache after creating post
+    await revalidateAdminChanges('blog');
+
     return NextResponse.json({ success: true, post }, { status: 201 });
   } catch (error) {
     console.error('Error creating post:', error);
@@ -112,6 +116,9 @@ export async function PUT(request: NextRequest) {
       }
     });
 
+    // Revalidate cache after updating post
+    await revalidateAdminChanges('blog');
+
     return NextResponse.json({ success: true, post });
   } catch (error) {
     console.error('Error updating post:', error);
@@ -131,6 +138,9 @@ export async function DELETE(request: NextRequest) {
     await prisma.post.delete({
       where: { id }
     });
+
+    // Revalidate cache after deleting post
+    await revalidateAdminChanges('blog');
 
     return NextResponse.json({ success: true, message: 'Post deleted successfully' });
   } catch (error) {

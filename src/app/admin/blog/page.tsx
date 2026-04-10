@@ -335,13 +335,29 @@ export default function BlogManagementPage() {
   // Save post (Create or Update)
   const handleSavePost = async (postData: any) => {
     try {
-      const url = postData.id ? `/api/blog/${postData.id}` : '/api/blog';
+      const url = postData.id ? `/api/blog` : '/api/blog';
       const method = postData.id ? 'PUT' : 'POST';
+
+      // Convert status to published boolean for API
+      const apiPayload = {
+        ...postData,
+        published: postData.status === 'published',
+        // Remove status field as API doesn't expect it
+        status: undefined
+      };
+      delete apiPayload.status;
+      delete apiPayload.featured; // API doesn't handle featured
+      delete apiPayload.author; // API doesn't handle author
+      delete apiPayload.category; // API doesn't handle category
+      delete apiPayload.readTime; // API doesn't handle readTime
+      delete apiPayload.likes; // API doesn't handle likes
+      delete apiPayload.comments; // API doesn't handle comments
+      delete apiPayload.publishedAt; // API doesn't handle publishedAt
 
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(postData)
+        body: JSON.stringify(apiPayload)
       });
 
       if (response.ok) {

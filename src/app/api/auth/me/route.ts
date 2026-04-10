@@ -3,6 +3,9 @@ import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 import { verifyJwtToken } from '@/lib/auth';
 
+// Mark this route as dynamic since it uses cookies
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     // Get token from cookies

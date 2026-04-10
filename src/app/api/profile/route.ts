@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { revalidateAdminChanges } from '@/lib/revalidate';
 
 export async function GET(request: NextRequest) {
   try {
@@ -80,6 +81,9 @@ export async function PUT(request: NextRequest) {
         }
       });
     }
+
+    // Revalidate cache after updating profile
+    await revalidateAdminChanges('profile');
 
     return NextResponse.json({
       success: true,

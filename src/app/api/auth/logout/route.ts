@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
+// Mark as dynamic since this route uses cookies
+export const dynamic = 'force-dynamic';
+
 export async function POST() {
   try {
     // Clear the authentication cookie
