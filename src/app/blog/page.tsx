@@ -66,7 +66,7 @@ export default function BlogPage() {
               category: post.tags?.[0] || 'General',
               author: 'Shishir Pandey',
               readTime: Math.ceil(post.content?.length / 1000) || 5
-            })).filter(post => post.published); // Only show published posts
+            })).filter((post: BlogPost) => post.published); // Only show published posts
             setPosts(transformedPosts);
             setFilteredPosts(transformedPosts);
           } else {
